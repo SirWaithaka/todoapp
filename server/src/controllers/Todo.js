@@ -15,8 +15,9 @@ module.exports = {
   },
   async delete (req, res) {
     try {
+      console.log(req.body)
       Todo.remove({_id: req.body.id})
-        .exec().then(result => res.status(200).send(result)).catch(err => {throw err})
+        .exec().then(result => res.status(204).send(result)).catch(err => {throw err})
     } catch (err) {
       return res.status(500).send({error: 'Something wrong happened'})
     }
@@ -25,7 +26,10 @@ module.exports = {
     try {
       Todo.find()
         .exec()
-        .then(todos => res.status(200).send(todos)).catch(err => {throw err})
+        .then(data => {
+          const todos = data.map(todo => {return {id: todo._id, content: todo.content} })
+          res.status(200).send(todos)
+        }).catch(err => {throw err})
     } catch (err) {
       return res.status(500).send(err)
     }
