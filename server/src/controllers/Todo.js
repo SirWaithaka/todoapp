@@ -8,15 +8,15 @@ module.exports = {
         _id: mongoose.Types.ObjectId(),
         content: req.body.content
       })
-      todo.save().then(result => res.status(201).send(result)).catch(err => {throw err})
+      todo.save().then(result => res.status(201).send({id: result._id, content: result.content})).catch(err => {throw err})
     } catch (err) {
         return res.status(500).send({error: 'Something wrong happened'})
     }
   },
   async delete (req, res) {
     try {
-      console.log(req.body)
-      Todo.remove({_id: req.body.id})
+      console.log(req.params)
+      Todo.remove({_id: req.params.id})
         .exec().then(result => res.status(204).send(result)).catch(err => {throw err})
     } catch (err) {
       return res.status(500).send({error: 'Something wrong happened'})

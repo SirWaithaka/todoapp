@@ -23,19 +23,10 @@ class Home extends Component {
   handleChange(e) {
     this.setState({content: e.target.value})
   }
-  async handleSubmit(e) {
-    try {
-      e.preventDefault()
-      const response = await TodoApiService.addTodo({
-        content: this.state.content
-      })
-      this.props.addTodo({id: response.data.id, content: this.state.content})
-      this.setState({content: ''})
-      console.log(this.props.todos)
-      console.log(response.data)
-    } catch (err) {
-      console.log(err.response.data.error)
-    }
+  handleSubmit(e) {
+    e.preventDefault()
+    this.props.addTodo(this.state.content)
+    this.setState({content: ''})
   }
 
   render() {
@@ -73,11 +64,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch/*, ownProps*/) => {
   return {
-    addTodo: (todo) => {
-      dispatch(addTodoAction(todo))
+    addTodo: (content) => {
+      TodoApiService.addTodo({content}).then(res => {
+        console.log(res.data)
+        dispatch(addTodoAction({id: res.data.id, content: res.data.content}))
+      })
     },
     deleteTodo: async (id) => {
-      TodoApiService.deleteTodo({id}).then(res => {
+      TodoApiService.deleteTodo(id).then(res => {
         console.log(res)
         dispatch(deleteTodoAction(id))
       })
