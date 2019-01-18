@@ -1,12 +1,14 @@
 const initState = {
-  todos: [
-    { id: 1, content: 'learn react'},
-    { id: 2, content: 'Learn redux'}
-  ]
+  todos: []
 }
 
 const rootReducer = (state = initState, action) => {
   switch (action.type) {
+    case 'INIT_STATE':
+      return {
+        ...state,
+        todos: action.todos
+      }
     case 'ADD_TODO':
       return {
         ...state,

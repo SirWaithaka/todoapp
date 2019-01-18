@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { addTodoAction, deleteTodoAction } from '../actions'
+import { addTodoAction, deleteTodoAction, initStateAction } from '../actions'
+import TodoApiService from '../services/TodoApiService'
 
 class Home extends Component {
 
@@ -13,15 +14,28 @@ class Home extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
+  componentDidMount() {
+    TodoApiService.getTodos().then(res => {
+      this.props.initState(res.data)
+      console.log(res.data)
+    })
+  }
   handleChange(e) {
     this.setState({content: e.target.value})
   }
-  handleSubmit(e) {
-    e.preventDefault()
-    const id = this.props.todos.length +1
-    this.props.addTodo({id, content: this.state.content})
-    this.setState({content: ''})
-    console.log(this.props.todos)
+  async handleSubmit(e) {
+    try {
+      e.preventDefault()
+      const response = await TodoApiService.addTodo({
+        content: this.state.content
+      })
+      this.props.addTodo({id: response.data.id, content: this.state.content})
+      this.setState({content: ''})
+      console.log(this.props.todos)
+      console.log(response.data)
+    } catch (err) {
+      console.log(err.response.data.error)
+    }
   }
 
   render() {
@@ -59,8 +73,18 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch/*, ownProps*/) => {
   return {
-    addTodo: (todo) => dispatch(addTodoAction(todo)),
-    deleteTodo: (id) => dispatch(deleteTodoAction(id)) 
+    addTodo: (todo) => {
+      dispatch(addTodoAction(todo))
+    },
+    deleteTodo: async (id) => {
+      TodoApiService.deleteTodo({id}).then(res => {
+        console.log(res)
+        dispatch(deleteTodoAction(id))
+      })
+    },
+    initState: (todos) => {
+      dispatch(initStateAction(todos))
+    }
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

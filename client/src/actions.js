@@ -12,3 +12,10 @@ export const deleteTodoAction = (id) => {
     id
   }
 }
+
+export const initStateAction = (todos) => {
+  return {
+    type: 'INIT_STATE',
+    todos
+  }
+}
