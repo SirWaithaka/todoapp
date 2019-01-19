@@ -36,8 +36,22 @@ class Home extends Component {
     let todoList = todos.length ? (
       todos.map(todo => {
         return (
-          <div className="collection-item" key={todo.id}>
-            <span onClick={() => deleteTodo(todo.id)}>{todo.content}</span>
+          <div class="col s12 m5">
+            <div class="card-panel light-blue darken-4" key={todo.id}>
+              <div class="row">
+                <div class="col s4 offset-s7">
+                  <a class="waves-effect waves-teal teal white-text btn-flat" onClick={() => deleteTodo(todo.id)}>Remove</a>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row">
+                <div class="col s12">
+                  <span class="white-text">
+                    {todo.content}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         )
       })
@@ -46,11 +60,13 @@ class Home extends Component {
     )
     return (
       <div className="HomeMain">
-        {todoList}
         <form onSubmit={this.handleSubmit}>
           <label>Add New Todo:</label>
           <input type="text" onChange={this.handleChange} value={this.state.content}/>
         </form>
+        <div class="row">
+          {todoList}
+        </div>
       </div>
     )
   }
